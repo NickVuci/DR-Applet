@@ -1,12 +1,26 @@
-body {
-    font-family: Arial, sans-serif;
-    margin: 20px;
-    max-width: 900px;
+/* Variables */
+:root {
+    --font-family: Arial, sans-serif;
+    --max-width: 900px;
+    --margin: 20px;
+    --row-margin-bottom: 1em;
+    --freq-row-margin-bottom: 8px;
+    --label-width: 40px;
+    --volume-slider-width: 100px;
+    --freq-slider-width: 120px;
+    --freq-number-width: 60px;
+  }
+  
+  /* Body styles */
+  body {
+    font-family: var(--font-family);
+    margin: var(--margin);
+    max-width: var(--max-width);
   }
   
   /* Common row styles */
   .row {
-    margin-bottom: 1em;
+    margin-bottom: var(--row-margin-bottom);
     display: flex;
     align-items: center;
   }
@@ -15,12 +29,12 @@ body {
   .freq-row {
     display: flex;
     align-items: center;
-    margin-bottom: 8px;
+    margin-bottom: var(--freq-row-margin-bottom);
   }
   
   /* Left label for f0, f1, etc. */
   .freq-row label {
-    width: 40px;
+    width: var(--label-width);
     font-weight: bold;
   }
   
@@ -31,19 +45,19 @@ body {
   
   /* Volume slider width, spacing */
   .freq-row .volumeSlider {
-    width: 100px;
+    width: var(--volume-slider-width);
     margin-right: 16px;
   }
   
   /* Frequency slider width, spacing */
   .freq-row .freqSlider {
-    width: 120px;
+    width: var(--freq-slider-width);
     margin-right: 8px;
   }
   
   /* Frequency numeric input width, spacing */
   .freq-row .freqNumber {
-    width: 60px;
+    width: var(--freq-number-width);
     margin-right: 8px;
   }
   
@@ -51,4 +65,3 @@ body {
   .freq-row .lockCheckbox {
     margin-right: 4px;
   }
-  

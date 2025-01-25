@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Delta-Rational (f0 through f5)</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 20px;
+    }
+
+    /* Container for each group of controls */
+    .control-group {
+      margin-bottom: 10px;
+    }
+
+    /* A single row of controls: label, slider, number input, etc. */
+    .control-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 5px;
+    }
+
+    /* Make the range sliders fill all available horizontal space */
+    .control-row input[type="range"] {
+      flex: 1;
+    }
+
+    /* Slightly narrower label for oscillator names (f0..f5) */
+    .osc-label {
+      width: 30px;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Delta-Rational Intervals (f0 through f5)</h1>
+
+<!-- Root Frequency -->
+<div class="control-group">
+  <div class="control-row">
+    <label for="rootSlider">Root Frequency (Hz):</label>
+    <input
+      type="range"
+      id="rootSlider"
+      min="20"
+      max="1000"
+      value="220"
+      step="1"
+    >
+    <input
+      type="number"
+      id="rootInput"
+      min="20"
+      max="10000"
+      step="1"
+      value="220"
+    >
+  </div>
+</div>
+
+<!-- Delta -->
+<div class="control-group">
+  <div class="control-row">
+    <label for="deltaSlider">Delta (Hz):</label>
+    <input
+      type="range"
+      id="deltaSlider"
+      min="1"
+      max="1000"
+      value="110"
+      step="1"
+    >
+    <input
+      type="number"
+      id="deltaInput"
+      min="1"
+      max="10000"
+      step="1"
+      value="110"
+    >
+  </div>
+</div>
+
+<!-- f0 (root, no error slider) -->
+<div class="control-group">
+  <div class="control-row">
+    <input type="checkbox" id="check1" checked>
+    <label for="check1" class="osc-label">f0</label>
+  </div>
+</div>
+
+<!-- f1 -->
+<div class="control-group">
+  <div class="control-row">
+    <input type="checkbox" id="check2" checked>
+    <label for="error2Slider" class="osc-label">f1</label>
+    <input
+      type="range"
+      id="error2Slider"
+      min="-50"
+      max="50"
+      value="0"
+      step="0.1"
+    >
+    <input
+      type="number"
+      id="error2Input"
+      min="-100"
+      max="100"
+      step="0.1"
+      value="0"
+    >
+  </div>
+</div>
+
+<!-- f2 -->
+<div class="control-group">
+  <div class="control-row">
+    <input type="checkbox" id="check3" checked>
+    <label for="error3Slider" class="osc-label">f2</label>
+    <input
+      type="range"
+      id="error3Slider"
+      min="-50"
+      max="50"
+      value="0"
+      step="0.1"
+    >
+    <input
+      type="number"
+      id="error3Input"
+      min="-100"
+      max="100"
+      step="0.1"
+      value="0"
+    >
+  </div>
+</div>
+
+<!-- f3 -->
+<div class="control-group">
+  <div class="control-row">
+    <input type="checkbox" id="check4" checked>
+    <label for="error4Slider" class="osc-label">f3</label>
+    <input
+      type="range"
+      id="error4Slider"
+      min="-50"
+      max="50"
+      value="0"
+      step="0.1"
+    >
+    <input
+      type="number"
+      id="error4Input"
+      min="-100"
+      max="100"
+      step="0.1"
+      value="0"
+    >
+  </div>
+</div>
+
+<!-- f4 -->
+<div class="control-group">
+  <div class="control-row">
+    <input type="checkbox" id="check5" checked>
+    <label for="error5Slider" class="osc-label">f4</label>
+    <input
+      type="range"
+      id="error5Slider"
+      min="-50"
+      max="50"
+      value="0"
+      step="0.1"
+    >
+    <input
+      type="number"
+      id="error5Input"
+      min="-100"
+      max="100"
+      step="0.1"
+      value="0"
+    >
+  </div>
+</div>
+
+<!-- f5 -->
+<div class="control-group">
+  <div class="control-row">
+    <input type="checkbox" id="check6" checked>
+    <label for="error6Slider" class="osc-label">f5</label>
+    <input
+      type="range"
+      id="error6Slider"
+      min="-50"
+      max="50"
+      value="0"
+      step="0.1"
+    >
+    <input
+      type="number"
+      id="error6Input"
+      min="-100"
+      max="100"
+      step="0.1"
+      value="0"
+    >
+  </div>
+</div>
+
+<button id="toggleAudioBtn">Start Audio</button>
+
+<script>
+  let audioContext;
+  let masterGain;
+
+  // We'll store references to each Oscillator and its GainNode
+  const oscillators = [];
+  const gains = [];
+
+  // Track whether audio is playing
+  let isPlaying = false;
+
+  // Main controls
+  const rootSlider     = document.getElementById('rootSlider');
+  const rootInput      = document.getElementById('rootInput');
+  const deltaSlider    = document.getElementById('deltaSlider');
+  const deltaInput     = document.getElementById('deltaInput');
+  const toggleAudioBtn = document.getElementById('toggleAudioBtn');
+
+  // Error sliders & checkboxes
+  // f0 has no error slider, so index 0 => null
+  const errorSliders = [
+    null,
+    document.getElementById('error2Slider'),
+    document.getElementById('error3Slider'),
+    document.getElementById('error4Slider'),
+    document.getElementById('error5Slider'),
+    document.getElementById('error6Slider')
+  ];
+  const errorInputs = [
+    null,
+    document.getElementById('error2Input'),
+    document.getElementById('error3Input'),
+    document.getElementById('error4Input'),
+    document.getElementById('error5Input'),
+    document.getElementById('error6Input')
+  ];
+  const checkboxes = [
+    document.getElementById('check1'), // f0
+    document.getElementById('check2'), // f1
+    document.getElementById('check3'), // f2
+    document.getElementById('check4'), // f3
+    document.getElementById('check5'), // f4
+    document.getElementById('check6')  // f5
+  ];
+
+  // Link a slider and a number input
+  function linkSliderAndInput(slider, number) {
+    if (!slider || !number) return;
+    slider.addEventListener('input', () => {
+      number.value = slider.value;
+      updateOscillators();
+    });
+    number.addEventListener('input', () => {
+      slider.value = number.value;
+      updateOscillators();
+    });
+  }
+
+  // Link main controls
+  linkSliderAndInput(rootSlider, rootInput);
+  linkSliderAndInput(deltaSlider, deltaInput);
+
+  // Link error controls for f1..f5
+  for (let i = 1; i <= 5; i++) {
+    linkSliderAndInput(errorSliders[i], errorInputs[i]);
+  }
+
+  // Checkboxes => on/off
+  checkboxes.forEach(chk => {
+    chk.addEventListener('change', updateOscillators);
+  });
+
+  // Toggle audio
+  toggleAudioBtn.addEventListener('click', () => {
+    if (!isPlaying) {
+      startAudio();
+      toggleAudioBtn.textContent = 'Stop Audio';
+    } else {
+      stopAudio();
+      toggleAudioBtn.textContent = 'Start Audio';
+    }
+    isPlaying = !isPlaying;
+  });
+
+  function startAudio() {
+    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+    // Create a master GainNode with lower gain
+    masterGain = audioContext.createGain();
+    masterGain.gain.value = 0.1; // helps prevent distortion when multiple are on
+    masterGain.connect(audioContext.destination);
+
+    // Create 6 oscillators (sine) with individual gains
+    for (let i = 0; i < 6; i++) {
+      const osc = audioContext.createOscillator();
+      osc.type = 'sine';
+
+      const oscGain = audioContext.createGain();
+      osc.connect(oscGain);
+      oscGain.connect(masterGain);
+
+      osc.start();
+
+      oscillators.push(osc);
+      gains.push(oscGain);
+    }
+
+    updateOscillators();
+  }
+
+  function stopAudio() {
+    // Stop and disconnect all oscillators
+    for (let i = 0; i < oscillators.length; i++) {
+      oscillators[i].stop();
+      oscillators[i].disconnect();
+      gains[i].disconnect();
+    }
+    oscillators.length = 0;
+    gains.length = 0;
+
+    // Disconnect and close
+    if (masterGain) masterGain.disconnect();
+    if (audioContext) audioContext.close();
+  }
+
+  function updateOscillators() {
+    if (!audioContext || oscillators.length < 6) return;
+
+    // Root (f0) + delta
+    const rootFreq = parseFloat(rootInput.value) || 220;
+    const delta    = parseFloat(deltaInput.value) || 110;
+
+    // f0..f5
+    //   f0 = root only
+    //   f1 = root + 1×delta + error
+    //   f2 = root + 2×delta + error
+    //   ...
+    //   f5 = root + 5×delta + error
+    for (let i = 0; i < 6; i++) {
+      // Check if oscillator is on
+      const isOn = checkboxes[i].checked;
+      gains[i].gain.value = isOn ? 1 : 0;
+
+      // Error for f1..f5
+      let err = 0;
+      if (i >= 1 && errorInputs[i]) {
+        err = parseFloat(errorInputs[i].value) || 0;
+      }
+
+      // Frequency for oscillator i
+      const frequency = rootFreq + i * delta + err;
+      oscillators[i].frequency.value = frequency;
+    }
+  }
+</script>
+</body>
+</html>

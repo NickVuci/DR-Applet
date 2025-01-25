@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Delta-Rational Explorer</title>
+  <!-- Link to external CSS -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <header>
+    <h1>Delta-Rational Explorer</h1>
+  </header>
+
+  <main>
+    <!-- Display Delta -->
+    <section class="row">
+      <label for="deltaDisplay">Delta (Hz):</label>
+      <span id="deltaDisplay">0</span>
+    </section>
+
+    <!-- Waveform Selector -->
+    <section class="row">
+      <label for="waveform">Waveform:</label>
+      <select id="waveform">
+        <option value="sine" selected>Sine</option>
+        <option value="square">Square</option>
+        <option value="sawtooth">Sawtooth</option>
+        <option value="triangle">Triangle</option>
+      </select>
+    </section>
+
+    <!-- Frequencies Container -->
+    <section id="frequenciesContainer"></section>
+  </main>
+
+  <!-- Include external JavaScript -->
+  <script src="script.js"></script>
+
+</body>
+</html>
