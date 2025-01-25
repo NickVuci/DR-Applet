@@ -14,18 +14,27 @@
       align-items: center;
       gap: 10px;
       margin-bottom: 10px;
+      /* Let these rows stretch across available width */
+      width: 100%;
     }
+
     .osc-group {
+      /* Removed fixed max-width: 600px; to make it fully responsive */
+      width: 100%;
+      box-sizing: border-box;
       margin-bottom: 20px;
       border: 1px solid #ccc;
       padding: 10px;
-      max-width: 600px;
     }
+
     .slider-row {
       display: flex;
       align-items: center;
       gap: 10px;
+      width: 100%;
     }
+
+    /* Make <input type="range"> fill horizontal space in a flex row */
     .slider-row input[type="range"] {
       flex: 1;
     }
@@ -35,14 +44,14 @@
 
 <h1>Exploring Delta-Rational Harmony</h1>
 
-<!-- Delta only at top -->
+<!-- Delta on top (fills screen width) -->
 <div class="control-row">
   <label for="deltaSlider">Delta (Hz):</label>
   <input
     type="range"
     id="deltaSlider"
     min="1"
-    max="500"
+    max="300"
     value="110"
     step="1"
     style="flex:1;"
@@ -51,18 +60,17 @@
     type="number"
     id="deltaInput"
     min="1"
-    max="500"
+    max="300"
     step="1"
     value="110"
   >
 </div>
 
-<!-- f0 block, now includes root frequency slider & input -->
+<!-- f0 block, includes root frequency slider & input -->
 <div class="osc-group">
   <div class="control-row">
     <input type="checkbox" id="check0" checked>
     <label for="check0">f0</label>
-    <!-- freq display -->
     <span> | freq: <span id="freq0Hz">--</span> Hz (<span id="freq0Cents">0.00</span> cents)</span>
   </div>
   
@@ -391,7 +399,6 @@
     const delta    = parseFloat(deltaInput.value) || 110;
 
     for (let i = 0; i < 6; i++) {
-      // Check state
       const isOn = checks[i].checked;
 
       // Error for f1..f5
