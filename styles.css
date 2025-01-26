@@ -1,0 +1,34 @@
+body {
+    font-family: sans-serif;
+    margin: 20px;
+  }
+  
+  .control-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    /* Let these rows stretch across available width */
+    width: 100%;
+  }
+  
+  .osc-group {
+    /* Removed fixed max-width: 600px; to make it fully responsive */
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    padding: 10px;
+  }
+  
+  .slider-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+  }
+  
+  /* Make <input type="range"> fill horizontal space in a flex row */
+  .slider-row input[type="range"] {
+    flex: 1;
+  }
