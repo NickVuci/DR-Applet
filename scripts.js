@@ -1,6 +1,17 @@
 document.addEventListener('DOMContentLoaded', () => {
     const oscillatorContainer = document.getElementById('oscillatorContainer');
   
+    const randomizeErrorsBtn = document.getElementById('randomizeErrorsBtn');
+
+    // Randomize Errors
+    randomizeErrorsBtn.addEventListener('click', () => {
+      for (let i = 1; i <= 5; i++) {
+          if (errorSliders[i]) errorSliders[i].value = (Math.random() * 100 - 50).toFixed(1);
+          if (errorInputs[i])  errorInputs[i].value  = errorSliders[i].value;
+      }
+      updateOscillators();
+  });
+  
     const createOscillatorGroup = (index) => {
       const oscGroup = document.createElement('div');
       oscGroup.className = 'osc-group';
